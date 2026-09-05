@@ -1,0 +1,13 @@
+{
+  "records_analyzed": 350,
+  "invalid_records_identified": 45,
+  "min_predicted_reference_parameter": 13.4436,
+  "max_predicted_reference_parameter": 55.5719,
+  "average_predicted_reference_parameter": 26.2128,
+  "test_ids_requiring_highest_attention": [
+    "TST-0027",
+    "TST-0217",
+    "TST-0199"
+  ],
+  "approach_explanation": "We cleaned the data by engineering fault-signal features (sensor missingness flags, duplicate-input flag) instead of deleting anomalies, since these patterns perfectly predicted validity. We tested six models for each task; ExtraTrees (classification) and RandomForest (regression) were selected after 5-seed cross-validation confirmed genuine, reproducible gains over simpler baselines. A tuned probability threshold (0.1967) replaced the default 0.5 to correct for class imbalance."
+}
