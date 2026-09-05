@@ -242,3 +242,8 @@ class Model:
     def __call__(self, input_path, output_path=None):
         """Allows: Model()(path_to_file) -> saved_output_path"""
         return self.predict_file(input_path, output_path)
+
+
+if __name__ == '__main__':
+    model = Model()
+    model(input_path='CPRI_Hackathon_Screening_Dataset_PARTICIPANT.xlsx', output_path='Freshers_404.csv')
