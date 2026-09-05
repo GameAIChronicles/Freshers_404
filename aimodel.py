@@ -29,9 +29,32 @@ Usage (from your teammate's UI or anywhere else):
 """
 
 import os
+import sys
 import pandas as pd
 import numpy as np
 import joblib
+
+# These classes are never called directly in this file — they're only
+# referenced inside the pickled .pkl model files, which joblib resolves
+# dynamically at load time. PyInstaller's static analysis can't see that
+# dependency without a literal import statement, so these imports exist
+# purely to make scikit-learn visible to the build and get bundled.
+import sklearn
+from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier, RandomForestRegressor  # noqa: F401
+
+
+def _base_dir():
+    """
+    Resolves the directory to look for bundled files (like the Model/
+    folder) in both of these situations:
+      - running normally as a .py script -> the folder this file is in
+      - running as a PyInstaller-frozen .exe -> PyInstaller's temp
+        extraction folder (sys._MEIPASS), where --add-data / datas
+        entries in the .spec actually land at runtime
+    """
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        return sys._MEIPASS
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 class Model:
@@ -59,12 +82,17 @@ class Model:
         "is_duplicate_input"
     ]
 
-    def __init__(self, model_dir="Model"):
+    def __init__(self, model_dir=None):
         """
-        Loads the two pretrained models from `model_dir`. Raises a clear
-        error immediately if they're missing, rather than failing later
-        mid-prediction.
+        Loads the two pretrained models from `model_dir`. If model_dir is
+        not given, resolves it automatically to a 'Model' folder next to
+        this script (or next to the .exe / inside its bundled data when
+        frozen by PyInstaller). Raises a clear error immediately if the
+        model files are missing, rather than failing later mid-prediction.
         """
+        if model_dir is None:
+            model_dir = os.path.join(_base_dir(), "Model")
+
         clf_path = os.path.join(model_dir, "final_classifier_extratrees.pkl")
         reg_path = os.path.join(model_dir, "final_regressor_randomforest.pkl")
 
