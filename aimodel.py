@@ -21,7 +21,7 @@ Usage (from your teammate's UI or anywhere else):
 
     model = Model()
     output_path = model("C:/path/to/some_new_hidden_data.xlsx")
-    # or equivalently:
+                            or
     output_path = model.predict_file("some_new_hidden_data.csv")
 
 `output_path` is the path to the saved predictions CSV
@@ -214,18 +214,3 @@ class Model:
     def __call__(self, input_path, output_path=None):
         """Allows: Model()(path_to_file) -> saved_output_path"""
         return self.predict_file(input_path, output_path)
-
-
-if __name__ == "__main__":
-    import sys
-
-    if len(sys.argv) < 2:
-        print("Usage: python aimodel.py <path_to_input_file.csv_or_.xlsx> [output_path.csv]")
-        sys.exit(1)
-
-    input_file = sys.argv[1]
-    out_file = sys.argv[2] if len(sys.argv) > 2 else None
-
-    model = Model()
-    saved_path = model.predict_file(input_file, out_file)
-    print(f"Predictions saved to: {saved_path}")
